@@ -1,19 +1,19 @@
 import { useNavigate } from "react-router-dom";
 
-import * as React from "react";
-import {useState,useEffect} from "react"
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
+import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { logoutUser } from "../util/AuthFunctions";
@@ -37,10 +37,11 @@ const profileDropdownList = [
 
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("isLogin "+localStorage.getItem("isLogin"));
-    if (localStorage.getItem("isLogin") == 'true') {
+    // console.log("isLogin "+localStorage.getItem("isLogin"));
+    if (localStorage.getItem("isLogin") === 'true') {
         setIsLogin(true);
     } else {
         setIsLogin(false);
@@ -57,7 +58,7 @@ const Header = () => {
     });
     logoutUser(userMail);
   }
-  const navigate = useNavigate();
+  
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -76,9 +77,6 @@ const Header = () => {
     setAnchorElUser(null);
   };
 
-  const navigateTo = (path) => {
-    navigate(path);
-  };
 
   return (
     <AppBar position="static" sx={{ bgcolor: "white" }}>
@@ -141,7 +139,7 @@ const Header = () => {
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Button
                     sx={{ color: secondaryColor, backgroundColor: "white" }}
-                    onClick={() => navigateTo(page.toLowerCase())}
+                    onClick={() => navigate(page.toLowerCase())}
                     textalign="center"
                     variant="outline"
                     underline="none"
@@ -157,7 +155,7 @@ const Header = () => {
             variant="h2"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -189,7 +187,7 @@ const Header = () => {
                 // onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "black", display: "block" }}
                 // href={`/${page.toLowerCase()}`}
-                onClick={() => navigateTo(page.toLowerCase())}
+                onClick={() => navigate(page.toLowerCase())}
               >
                 {page}
               </Button>
@@ -226,7 +224,7 @@ const Header = () => {
                 >
                   <Button
                     sx={{ color: secondaryColor }}
-                    onClick={() => navigateTo(setting.redirectTo)}
+                    onClick={() => {navigate(setting.redirectTo)}}
                     textalign="center"
                     underline="none"
                   >
@@ -247,7 +245,7 @@ const Header = () => {
               </MenuItem>
             </Menu></>) : (<Button
                     sx={{ color: secondaryColor }}
-                    onClick={() => navigateTo("/login")}
+                    onClick={() => {navigate("/login")}}
                     textalign="center"
                     underline="none"
                   >

@@ -42,6 +42,11 @@ code {
   margin: 0 auto;
 }
 
+.profile-img{
+  width:200px!important;
+  height:200px!important;
+}
+
 /* login page css */
 #loginPage{
   height:100vh;

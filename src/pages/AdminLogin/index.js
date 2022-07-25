@@ -1,18 +1,16 @@
-import React, { useContext } from "react";
-import { Formik } from "formik";
-import { LoginForm } from "./loginForm";
-import * as Yup from "yup";
 import { Card, Grid, Link } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Formik } from "formik";
+import React from "react";
+import * as Yup from "yup";
+import { LoginForm } from "./loginForm";
 // import Logo from "/tripflex.png";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  loginAdmin,
-  loginUser,
-  userLoginCheck,
+  loginAdmin, userLoginCheck
 } from "../../util/AuthFunctions";
 
 // cite : https://dev.to/finallynero/react-form-using-formik-material-ui-and-yup-2e8h

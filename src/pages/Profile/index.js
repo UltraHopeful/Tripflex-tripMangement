@@ -88,7 +88,8 @@ export default function Main() {
   const [userDetails, setUserDetails] = useState([]);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    userLoginCheck((info) => {
+    console.log("user profile page")
+    userLoginCheck((err,info) => {
       console.log(info);
       setUserDetails({fname: info[6].Value,
         lname: info[7].Value,
@@ -199,8 +200,8 @@ export default function Main() {
         <hr className="hr-fancy1" />
       </Grid>
       <Grid item xl={4} lg={4} md={4} sm={4} xs={10} alignItems="center">
-        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-          <Avatar alt="John" src="#" className="profile-img" />
+        <Box sx={{ display: "flex", justifyContent: "center",alignItems:"center", height: "100%" }}>
+          <Avatar alt={localStorage.getItem("userFName")} src="#" className="profile-img" />
         </Box>
         {/*<img alt="complex" className="profile-img" src="https://source.unsplash.com/random/?portrait,men" />*/}
       </Grid>

@@ -1,23 +1,24 @@
-import { Outlet } from "react-router-dom";
-import Header from "./components/Header";
-import "./App.css";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Outlet } from "react-router";
+import { Navigate, Route, Routes } from "react-router-dom";
+import "./App.css";
 
 // all pages import
-import Home from "./pages/Home/index";
-import Login from "./pages/Login/index";
-import Signup from "./pages/Signup/index";
-import VerifyUser from "./pages/VerifyUser/index";
-import Profile from "./pages/Profile/index";
-import AdminLogin from "./pages/AdminLogin/index"
-import AdminDashboard from "./pages/AdminDashboard/index"
-import CreateTrip from "./pages/CreateTrip/index";
+import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React from "react";
 import NoHeader from "./components/NoHeader";
+// import ProtectedRoute from "./components/ProtectedRoute";
 import WithHeader from "./components/WithHeader";
+import AdminDashboard from "./pages/AdminDashboard/index";
+import AdminLogin from "./pages/AdminLogin/index";
+import CreateTrip from "./pages/CreateTrip/index";
+import Home from "./pages/Home/index";
+import Login from "./pages/Login/index";
+import Profile from "./pages/Profile/index";
+import Signup from "./pages/Signup/index";
+import TripBook from "./pages/TripBook/index";
+import VerifyUser from "./pages/VerifyUser/index";
 
 const theme = createTheme({
   typography: {
@@ -28,6 +29,39 @@ const theme = createTheme({
   },
 });
 
+const ProtectedRoute = ({ isAllow, redirectPath = "/", children }) => {
+  if (!isAllow()) {
+    return <Navigate to={redirectPath} replace />;
+  }
+  console.log(children);
+  return children ? children : <Outlet/>;
+};
+
+function checkUser() {
+  const isLogin = localStorage.getItem("isLogin");
+  const profile = localStorage.getItem("profile");
+  // console.log("check user");
+  if (isLogin === 'true' && profile === 'user') {
+    // console.log("user true");
+    return true;
+  }
+  console.log("user false");
+  return false;
+};
+
+function checkAdmin() {
+  const isLogin = localStorage.getItem("isLogin");
+  const profile = localStorage.getItem("profile");
+  // console.log("check admin");
+  if (isLogin === 'true' && profile === 'admin') {
+    // console.log("admin true");
+    return true;
+  }
+  console.log("admin false");
+  
+  return false;
+};
+
 function App() {
   return (
     <div>
@@ -35,9 +69,14 @@ function App() {
         <Routes>
           <Route element={<WithHeader />}>
             <Route path="/" element={<Home />} exact />
-            <Route path="/my-profile" element={<Profile />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/create-trip" element={<CreateTrip />} />
+            <Route element={<ProtectedRoute isAllow={checkUser} />}>
+              <Route path="/my-profile" element={<Profile />} />
+              <Route path="/trip-book" element={<TripBook/>} />
+            </Route>
+            <Route element={<ProtectedRoute isAllow={checkAdmin} />}>
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/create-trip" element={<CreateTrip />} />
+            </Route>
           </Route>
           <Route element={<NoHeader />}>
             <Route path="/login" element={<Login />} />
