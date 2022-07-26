@@ -29,22 +29,23 @@ const profileDropdownList = [
     displayName: "My Profile",
     redirectTo: "my-profile",
   },
-  {
-    displayName: "My trips",
-    redirectTo: "my-trips",
-  },
+  // {
+  //   displayName: "My trips",
+  //   redirectTo: "my-trips",
+  // },
 ];
 
 const Header = () => {
   const [isLogin, setIsLogin] = useState(false);
+  const getProfile = localStorage.getItem("profile");
   const navigate = useNavigate();
 
   useEffect(() => {
     // console.log("isLogin "+localStorage.getItem("isLogin"));
-    if (localStorage.getItem("isLogin") === 'true') {
-        setIsLogin(true);
+    if (localStorage.getItem("isLogin") === "true") {
+      setIsLogin(true);
     } else {
-        setIsLogin(false);
+      setIsLogin(false);
     }
     return () => {};
   }, []);
@@ -57,8 +58,8 @@ const Header = () => {
       position: toast.POSITION.TOP_RIGHT,
     });
     logoutUser(userMail);
-  }
-  
+  };
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -77,7 +78,6 @@ const Header = () => {
     setAnchorElUser(null);
   };
 
-
   return (
     <AppBar position="static" sx={{ bgcolor: "white" }}>
       <Container maxWidth="xl">
@@ -86,7 +86,7 @@ const Header = () => {
             variant="h2"
             noWrap
             component="a"
-            href="/"
+            href={getProfile === "admin" ? "/admin-dashboard" : "/"}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -135,27 +135,27 @@ const Header = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+              <MenuItem onClick={handleCloseNavMenu}>
+                {getProfile === "admin" && (
                   <Button
                     sx={{ color: secondaryColor, backgroundColor: "white" }}
-                    onClick={() => navigate(page.toLowerCase())}
+                    href="/create-trip"
                     textalign="center"
                     variant="outline"
                     underline="none"
                   >
-                    {page}
+                    Create Trip
                   </Button>
-                  {/* <Link to={`/${page.toLowerCase()}`} textalign="center" underline="none">{page}</Link> */}
-                </MenuItem>
-              ))}
+                )}
+                {/* <Link to={`/${page.toLowerCase()}`} textalign="center" underline="none">{page}</Link> */}
+              </MenuItem>
             </Menu>
           </Box>
           <Typography
             variant="h2"
             noWrap
             component="a"
-            href="/"
+            href={getProfile === "admin" ? "/admin-dashboard" : "/"}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -181,77 +181,85 @@ const Header = () => {
               display: { xs: "none", md: "flex" },
             }}
           >
-            {pages.map((page) => (
+            {getProfile === "admin" && (
               <Button
-                key={page}
                 // onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "black", display: "block" }}
                 // href={`/${page.toLowerCase()}`}
-                onClick={() => navigate(page.toLowerCase())}
+                href="/create-trip"
               >
-                {page}
+                Create Trip
               </Button>
-            ))}
+            )}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-          {isLogin ? 
-          (<><Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="S" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {profileDropdownList.map((setting) => (
-                <MenuItem
-                  key={setting.displayName}
-                  onClick={handleCloseUserMenu}
+            {isLogin ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="S" src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
                 >
-                  <Button
-                    sx={{ color: secondaryColor }}
-                    onClick={() => {navigate(setting.redirectTo)}}
-                    textalign="center"
-                    underline="none"
-                  >
-                    {setting.displayName}
-                  </Button>
-                  {/* <Typography textalign="center">{setting}</Typography> */}
-                </MenuItem>
-              ))}
-              <MenuItem>
-                <Button
-                    sx={{ color: secondaryColor }}
-                    onClick={logout}
-                    textalign="center"
-                    underline="none"
-                  >
-                    Logout
-                  </Button>
-              </MenuItem>
-            </Menu></>) : (<Button
-                    sx={{ color: secondaryColor }}
-                    onClick={() => {navigate("/login")}}
-                    textalign="center"
-                    underline="none"
-                  >
-                    Login
-                  </Button>)}
-            
+                  {getProfile === "user" &&
+                    profileDropdownList.map((setting) => (
+                      <MenuItem
+                        key={setting.displayName}
+                        onClick={handleCloseUserMenu}
+                      >
+                        <Button
+                          sx={{ color: secondaryColor }}
+                          onClick={() => {
+                            navigate(setting.redirectTo);
+                          }}
+                          textalign="center"
+                          underline="none"
+                        >
+                          {setting.displayName}
+                        </Button>
+                        {/* <Typography textalign="center">{setting}</Typography> */}
+                      </MenuItem>
+                    ))}
+                  <MenuItem>
+                    <Button
+                      sx={{ color: secondaryColor }}
+                      onClick={logout}
+                      textalign="center"
+                      underline="none"
+                    >
+                      Logout
+                    </Button>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                sx={{ color: secondaryColor }}
+                onClick={() => {
+                  navigate("/login");
+                }}
+                textalign="center"
+                underline="none"
+              >
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>
