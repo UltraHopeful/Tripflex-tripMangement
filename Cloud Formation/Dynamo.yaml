@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: An AWS Serverless Lambda Function for handling all the product API endpoints.
+Parameters:
+  # Section: Dynamo DB Parameters
+  # Table: Trips
+  TripsTableName:
+    Type: String
+    Default: trips 
+    Description: Trips Table Name
+  TripPartitionKeyName:
+    Type: String
+    Default: tripId
+    Description: Trip Key Name
+  TripPartitionKeyType:
+    Type: String
+    Default: S
+    Description: Trip Key Type
+
+
+  # Section: Dynamo DB Parameters
+  # Table: Sub Trips
+  SubTripTableName:
+    Type: String
+    Default: subtrips 
+    Description: Trips Table Name
+  SubTripPartitionKeyName:
+    Type: String
+    Default: subTripId
+    Description: Trip Key Name
+  SubTripPartitionKeyType:
+    Type: String
+    Default: S
+    Description: Trip Key Type
+
+
+  # Section: Dynamo DB Parameters
+  # Table: Payments
+  PaymentTableName:
+    Type: String
+    Default: payments 
+    Description: Payment Table Name
+  PaymentPartitionKeyName:
+    Type: String
+    Default: paymentId
+    Description: Payment Key Name
+  PaymentPartitionKeyType:
+    Type: String
+    Default: S
+    Description: Payment Key Type
+
+Resources:
+
+  # Name: Trips Table
+  TripsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TripsTableName
+      AttributeDefinitions:
+        - AttributeName: !Ref TripPartitionKeyName
+          AttributeType: !Ref TripPartitionKeyType
+      KeySchema:
+        - AttributeName: !Ref TripPartitionKeyName
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  # Name: Sub Trip Table
+  SubTripsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref SubTripTableName
+      AttributeDefinitions:
+        - AttributeName: !Ref SubTripPartitionKeyName
+          AttributeType: !Ref SubTripPartitionKeyType
+      KeySchema:
+        - AttributeName: !Ref SubTripPartitionKeyName
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  # Name: Payment Table
+  PaymentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref PaymentTableName
+      AttributeDefinitions:
+        - AttributeName: !Ref PaymentPartitionKeyName
+          AttributeType: !Ref PaymentPartitionKeyType
+      KeySchema:
+        - AttributeName: !Ref PaymentPartitionKeyName
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
