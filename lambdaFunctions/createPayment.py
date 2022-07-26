@@ -69,6 +69,7 @@ def lambda_handler(event, context):
         )
         targetEmail = paymentDetails['email']
         mailMsg = f"You successfully booked {paymentDetails['tripName']} trip for {paymentDetails['noOfPersonInTrip']} persons \n on trip date {paymentDetails['date']}.\n The total bill amount is CA$ {paymentDetails['totalAmount']}.\nHere is the booking id for your reference : {paymentDetails['paymentId']}"
+        # cite : https://hands-on.cloud/working-with-sns-in-python-using-boto3/
         response = snsClient.publish(
             TopicArn=topic,
             Message=mailMsg,

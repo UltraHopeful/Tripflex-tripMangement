@@ -48,6 +48,8 @@ export default function Main() {
   let getSignedURL =
     "https://66lfk8xs6h.execute-api.us-east-1.amazonaws.com/default/s3FileUpload";
 
+  // cite : https://jsfiddle.net/jbeswick/jsxbv0ny/4/
+  // I refer above cite source for some of the code below
   function imageUriToBlob(imageUri) {
     let binary = atob(imageUri.split(",")[1]);
     let array = [];

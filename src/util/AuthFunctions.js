@@ -7,7 +7,8 @@ import {
 import cognitoCredentials from "../cognito-pool.json";
 
 const userPool = new CognitoUserPool(cognitoCredentials);
-
+// cite: https://github.com/patmood/react-aws-cognito-example/blob/master/src/Cognito.js
+// I refer the some of the code to built this file
 // first time user signup
 export const signupUser = (
   email,

@@ -14,9 +14,9 @@ exports.handler = async (event) => {
   return result
 };
 
-// https://github.com/aws-samples/s3-to-lambda-patterns/blob/master/videos-samples/5-s3-uploader/app.js
-// https://jsfiddle.net/jbeswick/jsxbv0ny/4/
-// https://www.youtube.com/watch?v=mw_-0iCVpUc&list=PLJo-rJlep0EAY0nMNBv0MZ487l1tOFAjh&index=7
+// cite : https://github.com/aws-samples/s3-to-lambda-patterns/blob/master/videos-samples/5-s3-uploader/app.js
+// cite : https://jsfiddle.net/jbeswick/jsxbv0ny/4/
+// cite : https://www.youtube.com/watch?v=mw_-0iCVpUc&list=PLJo-rJlep0EAY0nMNBv0MZ487l1tOFAjh&index=7
 const getUploadURL = async function() {
   console.log('Get url for uploading file')
   // make current date as file name
