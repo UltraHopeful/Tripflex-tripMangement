@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  VpcId:
+    Type: String
+    Default: vpc-04632ecea62d5f552
+  ImageId: 
+    Type: String
+    Default: ami-0cff7528ff583bf9a
+  InstanceType: 
+    Type: String
+    Default: t2.small
+Resources:
+  frontendSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable HTTP access via user defined port
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: 0.0.0.0/0
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+  frontendServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref WebSecurityGroup
+      KeyName: trialCloud
+      UserData: !Base64 
+        'Fn::Sub': |
+          #!/bin/bash
+          sudo su <<EOF
+          mkdir workspace
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install --lts
+          npm install pm2 -g
+          npm install serve -g
+          sudo yum install git -y
+          git clone https://github.com/UltraHopeful/tripflex.git
+          cd tripflex
+          pm2 serve build 80 --spa
+          EOF

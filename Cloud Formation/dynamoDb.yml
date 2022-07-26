@@ -1,0 +1,42 @@
+Resources:
+  tripTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: trips1
+      AttributeDefinitions:
+        - AttributeName: "tripId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "tripId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 5
+  
+  subTripTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "subTripId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "subTripId"
+          AttributeType: "HASH"
+      TableName: subTrips1
+      ProvisionedThroughput: 
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 5
+  
+  paymentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "paymentId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "paymentId"
+          AttributeType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 5
+      TableName: payment1

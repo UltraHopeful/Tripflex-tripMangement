@@ -1,0 +1,263 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  VpcId:
+    Type: String
+    Default: vpc-04632ecea62d5f552
+  ImageId: 
+    Type: String
+    Default: ami-0cff7528ff583bf9a
+  InstanceType: 
+    Type: String
+    Default: t2.small
+
+Resources: 
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AliasAttributes:
+        - email
+      UserPoolName: tripflexauths
+      AutoVerifiedAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: Your verification code is {####} to verify your account with tripflex.
+  
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      SupportedIdentityProviders:
+        - COGNITO
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: tripflexauths
+  
+  tripTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: trips3
+      AttributeDefinitions:
+        - AttributeName: "tripId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "tripId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 5
+  
+  subTripTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: subTrips3
+      AttributeDefinitions:
+        - AttributeName: "subTripId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "subTripId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 5
+  
+  paymentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "paymentId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "paymentId"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 5
+      TableName: payment3
+
+  snsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: tripConfirm3
+
+  frontendSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable HTTP access via user defined port
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: 0.0.0.0/0
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+  
+  frontendServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref frontendSecurityGroup
+      KeyName: trialCloud
+      UserData: !Base64 
+        'Fn::Sub': |
+          #!/bin/bash
+          sudo su <<EOF
+          mkdir workspace
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
+          . ~/.nvm/nvm.sh
+          nvm install --lts
+          npm install pm2 -g
+          npm install serve -g
+          sudo yum install git -y
+          git clone https://github.com/UltraHopeful/tripflex.git
+          cd tripflex
+          pm2 serve build 80 --spa
+          EOF
+  
+  Lambda1CreatTrip:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: createtrip3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: createTrip.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda2checkSubtrip:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: checkSubtrip3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: checkSubtrip.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda3getSubtrip:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getSubTrip3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: getSubTrip.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda4createPayment:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: createPayment3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: createPayment.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda5getDetailedTrip:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getDetailedTrip3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: getDetailedTrip.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda6getPayment:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getPayment3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: getPayment.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda7getTrips:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: getTrips3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: getTrips.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda8s3FileUpload:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: s3FileUpload3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: s3FileUpload.zip
+      Runtime: nodejs16.x
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+  Lambda9snsSubscribe:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: snsSubscribe3
+      Role: arn:aws:iam::256922262925:role/LabRole
+      Code:
+        S3Bucket: tripflexbackend
+        S3Key: snsSubscribe.zip
+      Runtime: python3.9
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
+      Handler: index.handler
+
+Outputs:
+  HostedUIURL:
+    Value: !Sub https://$tripflexauth.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=http://localhost:3000
+    Description: URL of Self Hosted UI of cognito
+  CognitoUserPoolID:
+    Value: !Ref UserPool
+    Description: UserpoolId to use in CognitoPool.json file
+  CognitoAppClientID:
+    Value: !Ref UserPoolClient
+    Description: UserPoolClient to use in CognitoPool.json file

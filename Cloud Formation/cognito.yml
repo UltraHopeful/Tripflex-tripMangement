@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources: 
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AliasAttributes:
+        - email
+      UserPoolName: tripflexauth
+      AutoVerifiedAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: Your verification code is {####} to verify your account with tripflex.
+  
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      SupportedIdentityProviders:
+        - COGNITO
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: tripflexauth
+
+Outputs:
+  HostedUIURL:
+    Value: !Sub https://$tripflexauth.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=http://localhost:3000
+    Description: URL of Self Hosted UI of cognito
+  CognitoUserPoolID:
+    Value: !Ref UserPool
+    Description: UserpoolId to use in CognitoPool.json file
+  CognitoAppClientID:
+    Value: !Ref UserPoolClient
+    Description: UserPoolClient to use in CognitoPool.json file

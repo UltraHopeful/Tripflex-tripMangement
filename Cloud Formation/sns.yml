@@ -1,0 +1,5 @@
+Resources:
+  snsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: tripConfirm1
