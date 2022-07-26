@@ -19,6 +19,9 @@ import Profile from "./pages/Profile/index";
 import Signup from "./pages/Signup/index";
 import TripBook from "./pages/TripBook/index";
 import VerifyUser from "./pages/VerifyUser/index";
+import TripTable from "./pages/AdminDashboard/tripTable";
+import SubTripTable from "./pages/AdminDashboard/subTripTable";
+import PaymentTable from "./pages/AdminDashboard/paymentTable";
 
 const theme = createTheme({
   typography: {
@@ -34,33 +37,33 @@ const ProtectedRoute = ({ isAllow, redirectPath = "/", children }) => {
     return <Navigate to={redirectPath} replace />;
   }
   console.log(children);
-  return children ? children : <Outlet/>;
+  return children ? children : <Outlet />;
 };
 
 function checkUser() {
   const isLogin = localStorage.getItem("isLogin");
   const profile = localStorage.getItem("profile");
   // console.log("check user");
-  if (isLogin === 'true' && profile === 'user') {
+  if (isLogin === "true" && profile === "user") {
     // console.log("user true");
     return true;
   }
   console.log("user false");
   return false;
-};
+}
 
 function checkAdmin() {
   const isLogin = localStorage.getItem("isLogin");
   const profile = localStorage.getItem("profile");
   // console.log("check admin");
-  if (isLogin === 'true' && profile === 'admin') {
+  if (isLogin === "true" && profile === "admin") {
     // console.log("admin true");
     return true;
   }
   console.log("admin false");
-  
+
   return false;
-};
+}
 
 function App() {
   return (
@@ -71,11 +74,14 @@ function App() {
             <Route path="/" element={<Home />} exact />
             <Route element={<ProtectedRoute isAllow={checkUser} />}>
               <Route path="/my-profile" element={<Profile />} />
-              <Route path="/trip-book" element={<TripBook/>} />
+              <Route path="/trip-book" element={<TripBook />} />
             </Route>
             <Route element={<ProtectedRoute isAllow={checkAdmin} />}>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/create-trip" element={<CreateTrip />} />
+              <Route path="/tripTable" element={<TripTable />} />
+              <Route path="/subTripTable" element={<SubTripTable />} />
+              <Route path="/paymentTable" element={<PaymentTable />} />
             </Route>
           </Route>
           <Route element={<NoHeader />}>

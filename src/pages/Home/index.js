@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Paper, Autocomplete, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { ValidationTextField } from "../../components/TextfieldCustom";
 
 export default function Index() {
   const tripsUrl =
