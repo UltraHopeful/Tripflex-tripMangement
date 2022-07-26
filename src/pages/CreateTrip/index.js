@@ -233,6 +233,10 @@ export default function Main() {
           response.json().then((res) => {
             const responseData = res;
             console.log(responseData);
+            toast.success("Trip added successfully", {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+            window.location.reload();
           });
         })
         .catch(error => {
