@@ -73,6 +73,15 @@ export default function InputForm(props) {
       .replace("-", "")
       .replace(" (", "")
       .replace(") ", "");
+    const requestContent = JSON.stringify({
+      email:values.email
+    });
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: requestContent,
+    };
+
     signupUser(
       values.email,
       values.firstName,
@@ -86,6 +95,12 @@ export default function InputForm(props) {
           return;
         }
         console.log(result.user);
+        const snsUrl = "https://0i54s9o6y5.execute-api.us-east-1.amazonaws.com/snsSubscribe"
+        fetch(snsUrl, requestOptions).then((response) => {
+          response.json().then((res) => {
+            console.log(res);
+          });
+        });
         notify();
         navigate("/verify-user", { state: { email: values.email } });
       }

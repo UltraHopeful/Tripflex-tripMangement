@@ -33,7 +33,7 @@ export default function Index() {
         <Typography variant="h3" align="center" sx={{ mb: 3, mt: 2 }}>
           Trips to explore
         </Typography>
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center" alignItems="stretch">
           {tripData.map(trip => {
             return (
               <Grid
@@ -44,10 +44,11 @@ export default function Index() {
                 sm={10}
                 xs={11}
                 key={trip.tripId+"grid"}
+                sx={{display:'flex'}}
               >
                 <Card
                   sx={{
-                    p: "10px 10px 10px 10px",
+                    p: "10px 10px 10px 10px",justifyContent: 'space-between',
                   }}
                   elevation={3}
                 >

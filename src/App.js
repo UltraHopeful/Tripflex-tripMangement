@@ -19,6 +19,7 @@ import Profile from "./pages/Profile/index";
 import Signup from "./pages/Signup/index";
 import TripBook from "./pages/TripBook/index";
 import VerifyUser from "./pages/VerifyUser/index";
+import Payment from "./pages/Payment/index";
 
 const theme = createTheme({
   typography: {
@@ -72,6 +73,7 @@ function App() {
             <Route element={<ProtectedRoute isAllow={checkUser} />}>
               <Route path="/my-profile" element={<Profile />} />
               <Route path="/trip-book" element={<TripBook/>} />
+              <Route path="/payment" element={<Payment/>} />
             </Route>
             <Route element={<ProtectedRoute isAllow={checkAdmin} />}>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
